@@ -1,0 +1,24 @@
+{
+  "name": "feature-flag",
+  "version": "1.0.0",
+  "description": "Simple feature flag library for node js.",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weinandt/feature-flag.git"
+  },
+  "author": "weinandt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/weinandt/feature-flag/issues"
+  },
+  "homepage": "https://github.com/weinandt/feature-flag#readme",
+  "devDependencies": {
+    "@types/node": "^16.10.2",
+    "typescript": "^4.4.3"
+  }
+}
