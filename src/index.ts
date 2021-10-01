@@ -1,1 +1,3 @@
-console.log('asdf')
+import { FeatureFlag } from "./featureFlag"
+
+export { FeatureFlag }
