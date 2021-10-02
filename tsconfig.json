@@ -9,6 +9,7 @@
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "sourceMap": true,
+        "declaration": true,
         "outDir": "lib",
     },
     "include": [
