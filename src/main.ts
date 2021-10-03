@@ -1,3 +1,1 @@
-import { FeatureFlag } from "./featureFlag"
-
-export { FeatureFlag }
+export * from './featureFlag'
