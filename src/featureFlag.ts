@@ -50,7 +50,7 @@ export class FeatureFlag {
         this.doingFlagLookup = false
     }
 
-    public addFlag(flagName: string, isEnabled = false) {
+    public addFlag(flagName: string, isEnabled = false): void {
         this.flagMap.set(flagName, isEnabled)
     }
 
