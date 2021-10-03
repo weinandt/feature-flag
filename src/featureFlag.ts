@@ -20,7 +20,10 @@ export class FeatureFlag {
         this.flagLookUp = config.flagLookUp
         this.flagMap = config.initialFlagMap == null ? new Map<string, boolean>() : config.initialFlagMap
 
-        setInterval(() => this.refreshFlags(), config.flagLookupInterval).unref()
+        const timer = setInterval(() => this.refreshFlags(), config.flagLookupInterval)
+
+        // There is no unref in the browser so, only calling if it is available (in node js).
+        timer.unref?.()
     }
 
     /**
