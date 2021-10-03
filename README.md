@@ -10,3 +10,4 @@ Please don't use yet, still testing npm publishing.
 1. Errors looking up a value are ignored. Should they be surfaced to the caller via a callback?
 1. Unit test.
 1. Add a timeout to the amount of time to spend looking up flags.
+1. Make sure everything works in the browser.
