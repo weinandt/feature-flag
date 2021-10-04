@@ -1,18 +1,20 @@
+import { OnceLockAsync } from "./onceLockAsync"
+
 export type FlagMap = Map<string, boolean>
 export type FlagValueLookupFunction = (flagNames: string[]) => Promise<FlagMap>
 
-export interface FeatureFlagConfig {
+export interface FeatureFlagCacheConfig {
     flagLookUp: FlagValueLookupFunction
     flagLookupInterval: number // Interval at which the flagLookUp funciton will be invoked (in ms).
     initialFlagMap?: FlagMap
 }
 
-export class FeatureFlag {
+export class FeatureFlagCache {
     private flagLookUp: FlagValueLookupFunction
     private flagMap: FlagMap
-    private doingFlagLookup = false
+    private flagLookupLock: OnceLockAsync = new OnceLockAsync()
 
-    constructor(config: FeatureFlagConfig) {
+    constructor(config: FeatureFlagCacheConfig) {
         if (config.flagLookUp == null) {
             throw new Error('Flag lookup must be present')
         }
@@ -30,24 +32,23 @@ export class FeatureFlag {
      * This can be immediately called after the constructor to ensure the flags values reflect the current state.
      */
     public async refreshFlags(): Promise<void> {
-        if (this.doingFlagLookup) {
-            // Already doing lookup.
-            return
+        // Get the lock
+        if (this.flagLookupLock.acquire()) {
+            let refreshMap: FlagMap = new Map<string, boolean>()
+            try {
+                refreshMap = await this.flagLookUp([...this.flagMap.keys()])
+            }
+            catch (err: any) {
+                // TODO: callback to user defined error function.
+            }
+
+            refreshMap.forEach((value, key) => this.flagMap.set(key, value))
+
+            this.flagLookupLock.release()
         }
-
-        this.doingFlagLookup = true
-
-        let refreshMap: FlagMap = new Map<string, boolean>()
-        try {
-            refreshMap = await this.flagLookUp([...this.flagMap.keys()])
+        else {
+            await this.flagLookupLock.waitForLockRelease()
         }
-        catch(err: any) {
-            // TODO: callback to user defined error function.
-        }
-
-        refreshMap.forEach((value, key) => this.flagMap.set(key, value))
-
-        this.doingFlagLookup = false
     }
 
     public addFlag(flagName: string, isEnabled = false): void {

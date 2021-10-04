@@ -1,1 +1,1 @@
-export * from './featureFlag'
+export * from './featureFlagCache'
