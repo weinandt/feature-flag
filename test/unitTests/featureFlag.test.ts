@@ -2,6 +2,7 @@ import {expect} from 'chai'
 import { FeatureFlagCache} from '../../src/main'
 import { Constants } from '../testConstants'
 import FakeTimers from '@sinonjs/fake-timers'
+import { TestUtilities } from '../testUtilities'
 
 describe('Feature Flag Initialization', () => {
     it('Initial flags passed are used.', () => {
@@ -108,19 +109,19 @@ describe('Feature Flag Initialization', () => {
         const newFlagValue = flagCache.isEnabled(flagName)
         expect(newFlagValue).to.be.true
     })
-    it('Flag Cache is updated to reflect current values when refresh is called.', async () => {
+    it('Flag Cache keeps previous values when they are not returned by lookup funciton.', async () => {
         // Arrange.
         const flagName = 'flagName'
         const flagValue = true
-        const newFeatureFlagMap = new Map<string, boolean>(
+        const initialFlagMap = new Map<string, boolean>(
             [[flagName, flagValue]]
         )
         const flagCache = new FeatureFlagCache({
             flagLookupInterval: Constants.MaxTimeOut,
             flagLookUp: async () => {
-                return newFeatureFlagMap
+                return new Map<string, boolean>()
             },
-            initialFlagMap: null,
+            initialFlagMap: initialFlagMap,
         })
 
         // Act.
@@ -130,7 +131,27 @@ describe('Feature Flag Initialization', () => {
         const newFlagValue = flagCache.isEnabled(flagName)
         expect(newFlagValue).to.be.true
     })
-    it('Lookup function is not invoked twice if one call is outstanding.', async () => {
-        
+    it('Lookup function is only invoked once if a lookup is already underway.', async () => {
+        // Arrange.
+        let invocationCount = 0
+        const flagCache = new FeatureFlagCache({
+            flagLookupInterval: Constants.MaxTimeOut,
+            flagLookUp: async () => {
+                invocationCount++
+
+                // Registering the rest of the funtion for the next phase of the event loop.
+                await TestUtilities.wait(0)
+                return new Map<string, boolean>()
+            },
+        })
+
+        // Act.
+        const firstPromise = flagCache.refreshFlags()
+        const secondPromise = flagCache.refreshFlags()
+        await Promise.all([firstPromise, secondPromise])
+
+
+        // Assert.
+        expect(invocationCount).to.equal(1)
     })
   })

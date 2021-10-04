@@ -1,4 +1,4 @@
-import { OnceLockAsync } from "./onceLockAsync"
+import { OnceLockAsync } from './onceLockAsync'
 
 export type FlagMap = Map<string, boolean>
 export type FlagValueLookupFunction = (flagNames: string[]) => Promise<FlagMap>

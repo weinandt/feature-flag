@@ -7,3 +7,5 @@ Simple feature flag library for node js.
 1. Unit test.
 1. Add a timeout to the amount of time to spend looking up flags.
 1. Make sure everything works in the browser.
+1. Write tests for once lock.
+1. Determine name of synchronization pattern OnceLock is using.
