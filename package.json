@@ -1,6 +1,6 @@
 {
   "name": "@weinandt/feature-flag",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Simple feature flag library for node js.",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
