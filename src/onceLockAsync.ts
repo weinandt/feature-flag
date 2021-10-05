@@ -21,7 +21,11 @@ export class OnceLockAsync {
      * lock ownership is up to the caller.
      */
     public release(): void {
-        this.resolve?.()
+        if (this.resolve == null) {
+            throw new Error('Should not be releasing a lock which is not acquired.')
+        }
+
+        this.resolve()
         this.resolve = null
         this.promise = null
     }
